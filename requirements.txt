@@ -1,0 +1,11 @@
+pdfminer
+langchain
+guidance
+gradio
+tiktoken
+azure-cognitiveservices-speech
+openai
+faiss-cpu
+pydantic
+python-dotenv
+requests
