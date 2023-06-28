@@ -12,11 +12,12 @@ vSearch = DocVectorSearch()
 vGuidanceHelper = GuidanceHelper()
 
 def chat_set_msg(grSessionData,user_message, history):
+    grSessionData.shrink_chat_history_openai()
     grSessionData.user_question = user_message
     grSessionData.add_chat_history_openai_user_msg(user_message)
     grSessionData.add_chat_history_gui_user_msg(user_message)
     # grSessionData.remove_br_from_chat_history_gui()
-    return grSessionData, grSessionData.chat_history_gui
+    return grSessionData, gr.update(value="", interactive=False), grSessionData.chat_history_gui
 
 
 def chat_set_bot(grSessionData):
@@ -27,14 +28,23 @@ def chat_set_bot(grSessionData):
     # print("***********************************************************************************")
     # print(rzdocs)
     # print("***********************************************************************************")
-    chatAnswer = vGuidanceHelper.chat_program(chat_history=grSessionData.chat_history_openai,doc_list=rzdocs)
-    grSessionData.add_chat_history_openai_bot_msg(chatAnswer)
-    grSessionData.add_chat_history_gui_bot_msg(chatAnswer)
-    print("=====================================================================================")
-    print(chatAnswer)
-    print("=====================================================================================")
-    grSessionData.shrink_chat_history_openai()
-    return grSessionData,"", grSessionData.chat_history_gui
+    
+    chatStream = vGuidanceHelper.chat_program_streaming(chat_history=grSessionData.chat_history_openai,doc_list=rzdocs)
+    pos = 0
+    for p in chatStream:
+        val = p.get("answer", "")
+        grSessionData.push_stream_chat_history_openai_bot_msg(val)
+        grSessionData.push_stream_chat_history_gui_bot_msg(val)
+        # print(val[pos:], end="", flush=True)
+        pos = len(val)
+        yield grSessionData, grSessionData.chat_history_gui
+    # chatAnswer = vGuidanceHelper.chat_program(chat_history=grSessionData.chat_history_openai,doc_list=rzdocs)
+    # grSessionData.add_chat_history_openai_bot_msg(chatAnswer)
+    # grSessionData.add_chat_history_gui_bot_msg(chatAnswer)
+    # print("=====================================================================================")
+    # print(chatAnswer)
+    # print("=====================================================================================")
+    # return grSessionData, grSessionData.chat_history_gui
 
 def clearHistory(grSessionData):
     grSessionData.clear_all_chat_history()
@@ -68,9 +78,11 @@ with gr.Blocks(theme=theme) as demo:
     
     # GUI event handlers
     title.click(None,None,None,_js=swtichdarkscript)
-    msg.submit(chat_set_msg, [grSessionData, msg, chatbot], [grSessionData,chatbot], queue=False).then(chat_set_bot, grSessionData, [grSessionData, msg, chatbot])
+    response = msg.submit(chat_set_msg, [grSessionData, msg, chatbot], [grSessionData,msg, chatbot], queue=False).then(chat_set_bot, grSessionData, [grSessionData,chatbot])
+    response.then(lambda:gr.update(interactive=True),None,[msg],queue=False)
     clear.click(clearHistory, grSessionData, [grSessionData,chatbot], queue=False)
 
+demo.queue()
     
 #gr.State()
 #demo.launch()

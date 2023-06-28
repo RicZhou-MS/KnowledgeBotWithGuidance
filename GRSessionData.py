@@ -17,11 +17,20 @@ class GRSessionData:
     def add_chat_history_gui_bot_msg(self, msg):
         self.chat_history_gui[-1][1] = msg
 
+    def push_stream_chat_history_gui_bot_msg(self, msg):
+        self.chat_history_gui[-1][1] = msg  # always update the last message
+
     def add_chat_history_openai_user_msg(self, msg):
         self.chat_history_openai.append({'role': 'user', 'content': msg})
 
     def add_chat_history_openai_bot_msg(self, msg):
         self.chat_history_openai.append({'role': 'assistant', 'content': msg})
+
+    def push_stream_chat_history_openai_bot_msg(self, msg):
+        if self.chat_history_openai[-1]['role'] == 'assistant':
+            self.chat_history_openai[-1]['content'] = msg
+        else:
+            self.chat_history_openai.append({'role': 'assistant', 'content': msg})
 
     def shrink_chat_history_openai(self):
         self.chat_history_openai = self.chat_history_openai[-10:] # keep the history within 5 rounds

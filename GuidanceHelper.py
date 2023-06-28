@@ -85,3 +85,7 @@ class GuidanceHelper:
     def chat_program(self, chat_history, doc_list):
         chatResult = self.chatprogram(chat_history=chat_history, doc_list=doc_list)
         return chatResult["answer"]
+    
+    def chat_program_streaming(self, chat_history, doc_list):
+        chatResult = self.chatprogram(chat_history=chat_history, doc_list=doc_list, stream=True, silent=True)
+        return chatResult
