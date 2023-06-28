@@ -78,9 +78,9 @@ with gr.Blocks(theme=theme) as demo:
     
     # GUI event handlers
     title.click(None,None,None,_js=swtichdarkscript)
-    response = msg.submit(chat_set_msg, [grSessionData, msg, chatbot], [grSessionData,msg, chatbot], queue=False).then(chat_set_bot, grSessionData, [grSessionData,chatbot])
-    response.then(lambda:gr.update(value="", placeholder="Type your question here...", interactive=True),None,[msg],queue=False)
-    clear.click(clearHistory, grSessionData, [grSessionData,chatbot], queue=False)
+    response = msg.submit(chat_set_msg, [grSessionData, msg, chatbot], [grSessionData,msg, chatbot], queue=False).then(lambda:gr.update(interactive=False),None,[clear]).then(chat_set_bot, grSessionData, [grSessionData,chatbot])
+    response.then(lambda:gr.update(value="", placeholder="Type your question here...", interactive=True),None,[msg],queue=False).then(lambda:gr.update(interactive=True),None,[clear])
+    clear.click(clearHistory, grSessionData, [grSessionData,chatbot], queue=False,)
 
 demo.queue()
     
