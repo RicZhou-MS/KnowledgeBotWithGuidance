@@ -12,8 +12,9 @@ class DocVectorSearch:
         os.environ["OPENAI_API_VERSION"] = "2023-05-15" #"2022-12-01"
         #os.environ["OPENAI_API_BASE"] = os.getenv('OPENAI_API_BASE')
         #os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
-        # DocPath = "BJDocStore"
-        self.vstore = FAISS.load_local("BJDocStore", OpenAIEmbeddings(chunk_size=1))
+        DocPath = "BJDocStore"
+        #DocPath = "HRDocStore"
+        self.vstore = FAISS.load_local(DocPath, OpenAIEmbeddings(chunk_size=1))
     
     def getDocs(self, query):
         docs = self.vstore.similarity_search_with_score(query, k=8)

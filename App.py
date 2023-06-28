@@ -17,7 +17,7 @@ def chat_set_msg(grSessionData,user_message, history):
     grSessionData.add_chat_history_openai_user_msg(user_message)
     grSessionData.add_chat_history_gui_user_msg(user_message)
     # grSessionData.remove_br_from_chat_history_gui()
-    grSessionData.push_stream_chat_history_gui_bot_msg("Think...")
+    # grSessionData.push_stream_chat_history_gui_bot_msg("Think...")
     return grSessionData, gr.update(value="Streaming out response, please wait...", interactive=False), grSessionData.chat_history_gui
 
 

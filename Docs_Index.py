@@ -21,7 +21,7 @@ os.environ["OPENAI_API_BASE"] = os.getenv('OPENAI_API_BASE')
 os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
 
 ENGLISH_CHUNK_SIZE = 1400
-CHINESE_CHUNK_SIZE = 500
+CHINESE_CHUNK_SIZE = 800
 
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=ENGLISH_CHUNK_SIZE, chunk_overlap=0)  # chunk_overlap=30
