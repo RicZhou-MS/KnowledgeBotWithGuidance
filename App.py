@@ -17,7 +17,7 @@ def chat_set_msg(grSessionData,user_message, history):
     grSessionData.add_chat_history_openai_user_msg(user_message)
     grSessionData.add_chat_history_gui_user_msg(user_message)
     # grSessionData.remove_br_from_chat_history_gui()
-    return grSessionData, gr.update(value="", interactive=False), grSessionData.chat_history_gui
+    return grSessionData, gr.update(value="Streaming out response, please wait...", interactive=False), grSessionData.chat_history_gui
 
 
 def chat_set_bot(grSessionData):
@@ -69,17 +69,17 @@ with gr.Blocks(theme=theme) as demo:
     grSessionData = gr.State(GRSessionData())
     # chat bot section
     title = gr.Button("Azure OpenAI KB bot via Guidance") #, label="", color="CornflowerBlue")
-    chatbot = gr.Chatbot().style(height=600)
-    msg = gr.Textbox(label="Type your question at below")
+    chatbot = gr.Chatbot().style(height=680)
+    msg = gr.Textbox(label="Type your question at below, press ENTER to send the question, press SHIFT+ENTER if want to add new line for input.", placeholder="Type your question here...")
     with gr.Row():
-        clear = gr.Button("Clear")
+        clear = gr.Button("Clear Chat History", label="")
 
-    gr.HTML('<hr size="18" width="100%" color="red">')
+    #gr.HTML('<hr size="18" width="100%" color="red">')
     
     # GUI event handlers
     title.click(None,None,None,_js=swtichdarkscript)
     response = msg.submit(chat_set_msg, [grSessionData, msg, chatbot], [grSessionData,msg, chatbot], queue=False).then(chat_set_bot, grSessionData, [grSessionData,chatbot])
-    response.then(lambda:gr.update(interactive=True),None,[msg],queue=False)
+    response.then(lambda:gr.update(value="", placeholder="Type your question here...", interactive=True),None,[msg],queue=False)
     clear.click(clearHistory, grSessionData, [grSessionData,chatbot], queue=False)
 
 demo.queue()
