@@ -17,6 +17,7 @@ def chat_set_msg(grSessionData,user_message, history):
     grSessionData.add_chat_history_openai_user_msg(user_message)
     grSessionData.add_chat_history_gui_user_msg(user_message)
     # grSessionData.remove_br_from_chat_history_gui()
+    grSessionData.push_stream_chat_history_gui_bot_msg("Think...")
     return grSessionData, gr.update(value="Streaming out response, please wait...", interactive=False), grSessionData.chat_history_gui
 
 
@@ -33,10 +34,13 @@ def chat_set_bot(grSessionData):
     pos = 0
     for p in chatStream:
         val = p.get("answer", "")
-        grSessionData.push_stream_chat_history_openai_bot_msg(val)
-        grSessionData.push_stream_chat_history_gui_bot_msg(val)
-        # print(val[pos:], end="", flush=True)
         pos = len(val)
+        if pos < 1:
+          grSessionData.push_stream_chat_history_gui_bot_msg("Processing...")
+        else:
+          grSessionData.push_stream_chat_history_openai_bot_msg(val)
+          grSessionData.push_stream_chat_history_gui_bot_msg(val)
+        # print(val[pos:], end="", flush=True)
         yield grSessionData, grSessionData.chat_history_gui
     # chatAnswer = vGuidanceHelper.chat_program(chat_history=grSessionData.chat_history_openai,doc_list=rzdocs)
     # grSessionData.add_chat_history_openai_bot_msg(chatAnswer)
