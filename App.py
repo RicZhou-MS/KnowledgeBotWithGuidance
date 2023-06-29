@@ -88,8 +88,14 @@ with gr.Blocks(theme=theme) as demo:
 
 demo.queue()
     
-#gr.State()
-#demo.launch()
+# gr.State()
+# demo.launch()
 # demo.launch(auth=("admin", "pass1234"), share=True)
-demo.launch(server_name="0.0.0.0", server_port=80)
+username = os.getenv('GRADIO_USERNAME')
+password = os.getenv('GRADIO_PASSWORD')
+
+if username and password:
+  demo.launch(server_name="0.0.0.0", server_port=80, auth=(username, password))
+else:
+  demo.launch(server_name="0.0.0.0", server_port=80)
 # dark theme:  http://localhost/?__theme=dark
